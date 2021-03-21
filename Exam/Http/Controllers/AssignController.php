@@ -19,6 +19,8 @@ use Modules\Exam\Entities\Course;
 use Modules\Exam\Entities\Groupes;
 use Modules\Exam\Entities\Studentregcourses;
 use Modules\Exam\Entities\BatchStudent;
+use Modules\Exam\Entities\Lectures;
+use Modules\Exam\Entities\Employees;
 use Session;
 use Carbon\Carbon;
 
@@ -28,6 +30,32 @@ class AssignController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
+    public function assignLecturesForExam($id){
+
+        $lectures = Lectures::select('lecturer_id as id','name_in_full as name');
+        $employees = Employees::select('employee_id as id','name_in_full as name');
+        $list = $lectures->union($employees);
+        $examgroupes = Examgroupes::where('academic_timetable_information_id',$id)->first();
+        $subgroupes = AcademicTimeTableInformation::with(['subgroupesForTimetable' => function ($e){
+            $e->with(['subgroup'])->get();
+        },'moduleName','examCategory'])->find($id);
+        $students = ExamgroupsStudents::where('academic_timetable_information_id','=',$id)->get();
+        $studentsCount = 0;
+        foreach($students as $student){
+            if($student->subgroup_id !=null){
+                $subg = Subgroupesstd::where('sg_id',$student->subgroup_id)->get()->count();
+                $studentsCount = $studentsCount + $subg;
+            }else{
+                $studentsCount = $studentsCount + 1;
+            }
+        }
+        $text1 = $studentsCount / $subgroupes->examCategory->student_count;
+        $text2 =  strtok($text1, '.');
+        if($text1 > $text2){
+           $text2 = $text2 + 1; 
+        }
+        return view('exam::exam-groupes.assigninvigilator')->with(array('invigilator'=>$text2,'studentsCount'=>$studentsCount,'students'=>$students,'list'=>$list->get(),'id'=>$id,"examgroupes"=>$examgroupes,'subgroupes'=>$subgroupes));
+    }
     public function assignStudentsExamGroupesAssignManual(Request $request)
     {
         $x = 0;
@@ -63,7 +91,7 @@ class AssignController extends Controller
     }
     public function assignStudentsExamGroupesManual  ($id)
     {
-        $examgroupes = Examgroupes::all();
+        $examgroupes = Examgroupes::where('academic_timetable_information_id',$id)->get();
         //$check = ExamgroupsStudents::where('student_id','=',0)->where('academic_timetable_information_id','=',$id)->get();
         $subgroup = DB::table('academic_timetable_subgroups')
                     ->join('subgroups', 'subgroups.id', '=', 'academic_timetable_subgroups.subgroup_id')

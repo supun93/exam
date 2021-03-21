@@ -15,7 +15,7 @@
     @foreach($students as $list)
     
     <?php
-    $check = Modules\Exam\Entities\ExamgroupsStudents::where('student_id','=',$list->range_id)->where('exam_group_id','=',$exam_group_id)->get()->count();
+    $check = Modules\Exam\Entities\ExamgroupsStudents::where('student_id','=',$list->student->range_id)->where('exam_group_id','=',$exam_group_id)->get()->count();
     if($check != 0){
        ?> @continue <?php 
     }
@@ -24,7 +24,7 @@
     @foreach($check as $check)
     <?php
         $sg_id = $check->subgroup_id;
-        $check2 = Modules\Exam\Entities\Subgroupesstd::where('sg_id','=',$sg_id)->where('std_id','=',$list->range_id)->get()->count();
+        $check2 = Modules\Exam\Entities\Subgroupesstd::where('sg_id','=',$sg_id)->where('std_id','=',$list->student->range_id)->get()->count();
     ?>
     @if($check2 == 1)
     <?php continue 2; ?>
@@ -32,7 +32,7 @@
     @endforeach
     <tr>
     <td>
-    <input type="hidden" name="student[]" value="{{$list->range_id}}">
+    <input type="hidden" name="student[]" value="{{$list->student->range_id}}">
     <input type="checkbox" name="select_{{$x}}" class="form-control myDropdown">
     </td>
     <td>

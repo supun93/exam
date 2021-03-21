@@ -18,4 +18,8 @@ class AcademicTimeTableInformation extends Model
     { 
         return $this->hasOne(Coursemodules::class,'module_id','module_id');
     }
+    public function examCategory()
+    { 
+        return $this->hasOne(Examcategory::class,'exam_category_id','exam_category_id');
+    }
 }

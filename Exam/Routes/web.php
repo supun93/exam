@@ -38,6 +38,7 @@ Route::prefix('exams')->group(function() {
     Route::post('exam-group/store', 'ExamgroupesController@store')->name('exam-group.store');
     Route::get('exam-group/trash', 'ExamgroupesController@trash')->name('exam-group.trash');
     Route::get('exam-group/trash-list/{id}', 'ExamgroupesController@trashList')->name('exam-group.trashlist');
+    Route::get('assign/invigilator/exam/{id}', 'AssignController@assignLecturesForExam')->name('assign.invigilator');
 
     Route::get('reports/students/list/requirements/all', 'ReportsController@studentsListReqAll')->name('exam-reports-students.req-all');
     Route::get('data/gen/table/filter/final/results/{action}', 'ReportsController@finalRes')->name('report-full-custom.list');
