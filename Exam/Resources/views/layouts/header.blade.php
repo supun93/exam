@@ -41,6 +41,7 @@
                                 <a class="dropdown-item" href="{{route('exam-categories.list')}}">Exam Categories</a>
                                 <a class="dropdown-item" href="{{route('grade-groupes.list')}}">Grade Groupes</a>
                                 <a class="dropdown-item" href="{{route('grades.list')}}">Grades</a>
+                                <a class="dropdown-item" href="{{route('exam-rates.form')}}">Exam Rates</a>
                             </div>
                         </li>
                     </ul>

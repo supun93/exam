@@ -9,4 +9,5 @@ class Employees extends Model
     protected $fillable = [];
     protected $table = 'employees';
     protected $primaryKey = 'employee_id';
+    
 }

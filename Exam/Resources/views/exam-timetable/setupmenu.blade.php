@@ -46,6 +46,30 @@ $nav_slo = "active" ?>
                             <a href="{{route('students-assign.exam-group',$id)}}" class="small-box-footer" target='_blank'>More info <i class="fas fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                            <div class="inner">
+                                <h5>INVIGILATORS FOR EXAM</h5>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person-add"></i>
+                            </div>
+                            <a href="{{route('assign.invigilator',$id)}}" class="small-box-footer" target='_blank'>More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h5>SPACES ASSIGN FOR EXAM</h5>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-person-add"></i>
+                            </div>
+                            <a href="{{route('exam-spaces.list',$id)}}" class="small-box-footer" target='_blank'>More info <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
                     </div>
                     
                 </div>

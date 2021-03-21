@@ -157,6 +157,51 @@ function checkOnline() {
         }   
     }, 1000);
 }
+////////////////////send post ajax ///////////////////////////
+function sendPostAjaxWithConfirm(url,form_data,action){
+		$.confirm({
+			title: 'Are you sure?',
+			content: "You won't be able to "+action+" this?",
+			backgroundDismissAnimation: 'glow',
+			type: 'orange',
+			typeAnimated: true,
+			autoClose: 'cancel|10000',
+			buttons: {
+			confirm: {
+				text: 'Yes, '+action+' it!',
+				btnClass: 'btn-success',
+				keys: ['enter', 'shift'],
+				action: function(){
+				$.ajax({
+					url:url,
+					data:form_data,
+          type: 'POST',
+          contentType: false, 
+          cache: false,
+          processData:false,
+					headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+					success:function(data){
+					if(data.msg == '2'){
+						masterAlert(2,'','');
+					}else{
+						masterAlert(1,'','');
+						location.reload();
+					}
+					}
+				});
+				}
+			},
+			cancel: {
+				text: 'Cancel',
+				btnClass: 'btn-danger',
+				keys: ['esc'],
+				action: function(){
+					
+				}
+			}
+			}
+		});
+	}
 function sendPostAjax(url,form_data,callback){
   $.ajax({
       type:'POST',

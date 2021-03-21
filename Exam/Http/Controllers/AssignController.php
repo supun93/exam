@@ -21,6 +21,7 @@ use Modules\Exam\Entities\Studentregcourses;
 use Modules\Exam\Entities\BatchStudent;
 use Modules\Exam\Entities\Lectures;
 use Modules\Exam\Entities\Employees;
+use Modules\Exam\Entities\InvigilatorForExam;
 use Session;
 use Carbon\Carbon;
 
@@ -30,10 +31,24 @@ class AssignController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
+    public function assignLecturesForExamRemove (Request $request){
+        $delete = InvigilatorForExam::find($request->row_id);
+        $delete->delete();
+        return response()->json(array('msg'=>1 ));
+    }
+    public function assignLecturesForExamStore (Request $request){
+        
+        $new = new InvigilatorForExam;
+        $new->invigilator_id = $request->id;
+        $new->academic_timetable_information_id = $request->info_id;
+        $new->from_table_name = $request->table;
+        $new->save();
+        return response()->json(array('msg'=>1 ));
+    }
     public function assignLecturesForExam($id){
 
-        $lectures = Lectures::select('lecturer_id as id','name_in_full as name');
-        $employees = Employees::select('employee_id as id','name_in_full as name');
+        $lectures = Lectures::select('lecturer_id as id','name_in_full as name','employee_id')->where('employee_id',null);
+        $employees = Employees::select('employee_id as id','name_in_full as name','employee_id');
         $list = $lectures->union($employees);
         $examgroupes = Examgroupes::where('academic_timetable_information_id',$id)->first();
         $subgroupes = AcademicTimeTableInformation::with(['subgroupesForTimetable' => function ($e){
@@ -54,6 +69,7 @@ class AssignController extends Controller
         if($text1 > $text2){
            $text2 = $text2 + 1; 
         }
+        $invigilatos = InvigilatorForExam::where('academic_timetable_information_id',$id)->get();
         return view('exam::exam-groupes.assigninvigilator')->with(array('invigilator'=>$text2,'studentsCount'=>$studentsCount,'students'=>$students,'list'=>$list->get(),'id'=>$id,"examgroupes"=>$examgroupes,'subgroupes'=>$subgroupes));
     }
     public function assignStudentsExamGroupesAssignManual(Request $request)
