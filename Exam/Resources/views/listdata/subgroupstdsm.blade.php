@@ -8,6 +8,7 @@
     <th>ID</th>
     <th>Student Name</th>
     <th>Special Note</th>
+    <th>Status</th>
     </tr>
     </thead>
     <tbody>
@@ -42,6 +43,29 @@
     <td>
     <textarea class="form-control" name="sp_note_{{$x}}" style='height:40px !important' placeholder="Special Note"></textarea>
     </td>
+    <td>
+    <?php
+    $info = Modules\Exam\Entities\AcademicTimeTableInformation::with(['moduleName' => function($b){
+        $b->with(['course:course_id'])->get();
+    }])->find($info_id);
+    $model = new Modules\Slo\Entities\Student;
+    $data = $model->getStudentStatus($list->student->range_id,$info->moduleName->course->course_id);
+    $status = $data->batchStudent->student_status;
+    ?>
+    @if($status == 0)
+    <b style="color: green">Active</b> 
+    @elseif($status == 1)
+    <b style="color: red">Inactive</b> 
+    @elseif($status == 2)
+    <b style="color: red">Temporary Drop</b> 
+    @elseif($status == 3)
+    <b style="color: red">Permenant Suspend</b> 
+    @elseif($status == 4)
+    <b style="color: red">Temporary Suspend</b> 
+    @elseif($status == 5)
+    <b style="color: green">Completed</b> 
+    @endif
+    </td>
     </tr>
     <?php $x++; ?>
     @endforeach
@@ -64,12 +88,12 @@ $("#assign_but").submit(function(event){
     }
     var form_data = new FormData(this); //Creates new FormData object
     sendPostAjax("{{route('students-exam-group-manual.assign')}}",form_data,'');
+    loadSpin.toggle();
   });
 });
     
 $('#table').DataTable({
     "oLanguage": {
-    "sInfo": '',
     "sEmptyTable": "",
     "sInfoEmpty": "",
     },

@@ -26,6 +26,7 @@ $pgName = "assign"
                         </div>
                     </div>
                 </div>
+                <input type="hidden" id="selection" value="0">
                 <div class="card-body">
                 <form action='' id="save{{$pgName}}" method='post'>
                 @csrf
@@ -63,6 +64,7 @@ $("#save{{$pgName}}").submit(function(event){
     }
     $("#loadTableFull").hide();
     var form_data = new FormData(this); //Creates new FormData object
+    loadSpin.toggle();
     sendPostAjax("{{route('students-exam-group.list')}}",form_data,'kk');
   });
 });

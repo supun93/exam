@@ -41,12 +41,14 @@ Route::prefix('exams')->group(function() {
     Route::get('assign/invigilator/exam/{id}', 'AssignController@assignLecturesForExam')->name('assign.invigilator');
     Route::post('assign/invigilator/exam/save', 'AssignController@assignLecturesForExamStore')->name('assign.invigilator-assign');
     Route::post('assign/invigilator/exam/remove', 'AssignController@assignLecturesForExamRemove')->name('assign.invigilator-remove');
-
+    Route::post('assign/invigilator/exam/supervisor/set', 'AssignController@setSupervisorsForExam')->name('assign.invigilator-supervisor');
+    
     Route::get('exam/rates/form', 'ExamController@examRatesForm')->name('exam-rates.form');
     Route::post('exam/rates/update', 'ExamController@examRatesUpdate')->name('exam-rates.update');
 
     Route::get('exam/spaces/list/{id}', 'ExamController@spacesList')->name('exam-spaces.list');
     Route::post('exam/spaces/availability/check', 'ExamController@availabilityCheck')->name('exam-spaces.availability-check');
+    Route::post('exam/spaces/assign/exam', 'ExamController@assignSpaces')->name('exam-spaces.assign');
 
     Route::get('reports/students/list/requirements/all', 'ReportsController@studentsListReqAll')->name('exam-reports-students.req-all');
     Route::get('data/gen/table/filter/final/results/{action}', 'ReportsController@finalRes')->name('report-full-custom.list');

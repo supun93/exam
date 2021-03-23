@@ -31,6 +31,12 @@ class AssignController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
+    public function setSupervisorsForExam (Request $request){
+        $set = InvigilatorForExam::find($request->row_id);
+        $set->supervisor = 1;
+        $set->save();
+        return response()->json(array('msg'=>1 ));
+    }
     public function assignLecturesForExamRemove (Request $request){
         $delete = InvigilatorForExam::find($request->row_id);
         $delete->delete();
@@ -124,7 +130,6 @@ class AssignController extends Controller
     public function assignStudentsExamGroupesListManual(Request $request){
         
         $students = BatchStudent::with(['student'])->whereBatchId($request->batch_id)->whereStatus(0)->get();
-        
         Session::put(array(
             'students'=>$students,
             'exam_group_id'=> $request->exam_group_id,
@@ -178,7 +183,6 @@ class AssignController extends Controller
             $i = 0;
             $sg = [];
             foreach($subgroupes as $subgroupes){
-                
                 $sg[] = $subgroupes->id;
                 $data = DB::table('subgroupes_std')
                     ->join('students', 'students.range_id', '=', 'subgroupes_std.std_id')
@@ -191,7 +195,6 @@ class AssignController extends Controller
                     }
                     $i++;
             }
-
             if($i !=0){
                 $db = DB::table('exam_group_students')
                         ->join('students', 'students.range_id', '=', 'exam_group_students.student_id')
@@ -203,13 +206,12 @@ class AssignController extends Controller
                 $students = $ss->get();
             }else{
                 $students = DB::table('exam_group_students')
-                ->join('students', 'students.range_id', '=', 'exam_group_students.student_id')
-                ->select('students.*')
-                ->where("exam_group_students.exam_group_id" , "=" , $request->exam_group_id)
-                ->where("exam_group_students.academic_timetable_information_id" , "=" , $request->info_id)
-                ->where("exam_group_students.student_id" , "!=" , 0)->get();
+                        ->join('students', 'students.range_id', '=', 'exam_group_students.student_id')
+                        ->select('students.*')
+                        ->where("exam_group_students.exam_group_id" , "=" , $request->exam_group_id)
+                        ->where("exam_group_students.academic_timetable_information_id" , "=" , $request->info_id)
+                        ->where("exam_group_students.student_id" , "!=" , 0)->get();
             }
-        
         Session::put(array(
             'students'=>$students,
             'exam_group_id'=> $request->exam_group_id,
@@ -217,7 +219,6 @@ class AssignController extends Controller
             'sg'=>$sg,
             ));
         return response()->json(array('msg'=> 1));
-
     }
     public function studentsAssignList($action){
         $students = Session::get('students');

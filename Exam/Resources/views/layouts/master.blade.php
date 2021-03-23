@@ -216,6 +216,8 @@ function sendPostAjax(url,form_data,callback){
           masterAlert(1,'','');
         }else if(data.res == 2){
           masterAlert(2,'','');
+        }else if(data.res == 3){
+          masterAlert(2,'',data.msg);
         }
         if(callback != undefined){
           successAjaxFunction(data);

@@ -27,7 +27,7 @@ $pgName = "assign"
                 Student: {{$studentsCount}} <br/>
                 Exam Category : {{$subgroupes->examCategory->exam_category}}<br/>
                 Invigilator Ratio : {{$subgroupes->examCategory->student_count}} : {{$subgroupes->examCategory->invigilator_ratio}}<br/>
-                Maximum Invigilator : {{$invigilator}}
+                Maximum Invigilator : {{$invigilator + 1}}
                 </div>
                 </div>
                 <div class='row'> <!-- sart row-->
@@ -39,6 +39,7 @@ $pgName = "assign"
                     <thead class="">
                     <tr>
                     <th>Full Name</th>
+                    <th>Status</th>
                     <th>Action</th>
                     </tr>
                     </thead>
@@ -71,10 +72,17 @@ $pgName = "assign"
                     <input type='hidden' name='info_id' class='info_id' value='{{$id}}'>
                     </td>
                     <td>
+                    @if($name->employee_id == null)
+                        Visiting
+                    @else
+                        Internal
+                    @endif
+                    </td>
+                    <td>
                     <?php
                         $count = Modules\Exam\Entities\InvigilatorForExam::where('academic_timetable_information_id',$id)->get()->count();
                     ?>
-                    @if($count < $invigilator)
+                    @if($count < $invigilator + 1)
                     <button class='btn btn-success btn-sm assignBut'>Assign</button>
                     @else
                     <button class='btn btn-success btn-sm assignBut' disabled>Assign</button>
@@ -95,6 +103,7 @@ $pgName = "assign"
                     <tr>
                     <th>Full Name</th>
                     <th>Action</th>
+                    <th>Supervisor</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -129,6 +138,17 @@ $pgName = "assign"
                     <input type='hidden' name='row_id' class='row_id' value='{{$row_id->row_id}}'>
                     </td>
                     <td><button class='btn btn-danger btn-sm removeBut'>Remove</button></td>
+                    <?php
+                        $count = Modules\Exam\Entities\InvigilatorForExam::where('academic_timetable_information_id',$id)->whereSupervisor(1)->get()->count();
+                        $sup = Modules\Exam\Entities\InvigilatorForExam::where('academic_timetable_information_id',$id)->whereSupervisor(1)->where('invigilator_id',$name->id)->get()->count();
+                    ?>
+                    <td>
+                    @if($sup == 1)
+                    <button class='btn btn-success' disabled>Selected As Supervisor</button>
+                    @elseif($count < 2)
+                    <button class='btn btn-info setSupervisorBut'>Set As Supervisor</button>
+                    @endif
+                    </td>
                     </tr>
                     @endforeach
                     </tbody>
@@ -140,7 +160,22 @@ $pgName = "assign"
 </div>
 <script>
 $(document).ready(function () {
-    //////////////// assign //////////////////////
+    //////////////// set as supervisor ///////////////
+    $(".setSupervisorBut").click(function(){
+        var row = $(this).closest("tr"),       // Finds the closest row <tr> 
+                tds = row.find("td");
+                id = tds.find(".id").val();
+                table = tds.find(".table").val();
+                info_id = tds.find(".info_id").val();
+                row_id = tds.find(".row_id").val();
+                var form_data = new FormData(); //Creates new FormData object
+        form_data.append( 'table', table );
+        form_data.append( 'id', id );
+        form_data.append( 'info_id', info_id );
+        form_data.append( 'row_id', row_id );
+        sendPostAjaxWithConfirm("{{route('assign.invigilator-supervisor')}}",form_data,'set');
+    });
+    //////////////// remove //////////////////////
     $(".removeBut").click(function(){
         var row = $(this).closest("tr"),       // Finds the closest row <tr> 
                 tds = row.find("td");
